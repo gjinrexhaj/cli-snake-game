@@ -7,7 +7,7 @@
 *
 * Programmers: Tyler Brown, Gjin Rexhaj
 * Date: May 1st, 2025
-/*
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
