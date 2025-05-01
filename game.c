@@ -49,6 +49,9 @@ int main() {
     clear(); // clears screen
     noecho(); // Will capture keystrokes, nothing shown on the screen (unless a key corresponds to an addstr string)
     curs_set(0); // hides the cursor
+
+    box(stdscr, 0, 0); // draw border
+
     keypad(stdscr, TRUE); // captures the entire screen
     nodelay(stdscr, TRUE); // makes getch() not interrupt the console and wait for an input
     // snake always starts by moving right at the start
