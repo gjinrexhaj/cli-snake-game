@@ -1,3 +1,14 @@
+/* 
+* CS 355 System Programming -- Snake Game Final Project
+*
+* Snake moves with a starting length of 5 moving right
+* Snake moves in all directions
+* Border is visible
+*
+* Programmers: Tyler Brown, Gjin Rexhaj
+* Date: May 1st, 2025
+/*
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <curses.h>
@@ -7,6 +18,7 @@
 int move_y;
 int move_x;
 
+// Programmer: Gjin Rexhaj
 typedef struct { // declare a struct that holds x and y coordinates, name it SnakeSegment
     int x;
     int y;
@@ -15,6 +27,7 @@ typedef struct { // declare a struct that holds x and y coordinates, name it Sna
 SnakeSegment snake[100]; // initialize an array of size 100, each array position holds an x and y coordinate
 int snake_length = 5; // start with a snake size of size 5
 
+// Programmer: Gjin Rexhaj
 void initialize_snake(int snake_length) {
     // starts at the middle of the screen
     int start_x = COLS / 2;
@@ -28,6 +41,7 @@ void initialize_snake(int snake_length) {
     }
 }
 
+// Programmer: Tyler Brown
 void move_snake(int move_x, int move_y) {
     move(snake[snake_length - 1].y, snake[snake_length - 1].x); // moves cursor to the end of the snake
     addstr(" "); // adds a space to the end of the snake, effectively removes the tail at the new cursor position
@@ -44,6 +58,7 @@ void move_snake(int move_x, int move_y) {
     refresh(); // refresh the string
 }
 
+// Collaborative effort to make the main function
 int main() {
     initscr(); // initialize the curses screen
     clear(); // clears screen
