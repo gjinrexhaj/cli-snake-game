@@ -13,6 +13,12 @@
 #include <stdlib.h>
 #include <curses.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
+
+
+// Function prototypes
+int get_terminal_width();
+int get_terminal_height();
 
 #define SNAKE_CHAR "p"
 int move_y;
@@ -24,8 +30,13 @@ typedef struct { // declare a struct that holds x and y coordinates, name it Sna
     int y;
 } SnakeSegment;
 
+typedef struct { // define Trophy struct, which contains a given trophies' xy coord
+    int x;
+    int y;
+} Trophy;
+
 SnakeSegment snake[100]; // initialize an array of size 100, each array position holds an x and y coordinate
-int snake_length = 5; // start with a snake size of size 5
+int snake_length = 3; // start with a snake size of size 3
 
 // Programmer: Gjin Rexhaj
 void initialize_snake(int snake_length) {
@@ -76,7 +87,21 @@ int main() {
 
     // Infinite loop to log arrow keystrokes and move the snake
     while(1) {
-        
+
+        // TODO: add trophy collision and snake growth logic (also drop new trophy if eat)
+
+        // TODO: add snake colliding with itself logic (if self collide, then game over)
+
+        // Check if snake is out of bounds, using ioctl
+        if (snake[0].x < 1 || snake[0].x > get_terminal_width() - 2 || snake[0].y < 1 || snake[0].y > get_terminal_height() - 2) {
+            // TODO: make game over screen prettier
+            printf("Game Over\n");
+            exit(0);
+        }
+
+        // TODO: check for trophy expiration (randomize a given trophies'
+        //  expiration time, drop new trophy if expire)
+
         int ch = getch();
         switch(ch) {
             // change an x or y value by 1 in a specific direction to move the snake
@@ -103,6 +128,23 @@ int main() {
         move_snake(move_x, move_y); // move the snake 1 space in specified direction
         refresh(); // refresh to update the console window
         usleep(100000); // sleep the console for a little bit
+
+        // TODO: add win condition (snake length > 1/2 size of terminal window
     }
     endwin();
+}
+
+
+// IMPLEMENT PROTOTYPES
+int get_terminal_width() {
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    return w.ws_col;
+}
+
+int get_terminal_height()
+{
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    return w.ws_row;
 }
