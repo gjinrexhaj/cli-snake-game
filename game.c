@@ -19,6 +19,7 @@
 // Function prototypes
 int get_terminal_width();
 int get_terminal_height();
+void game_over();
 
 #define SNAKE_CHAR "p"
 int move_y;
@@ -62,8 +63,12 @@ void move_snake(int move_x, int move_y) {
     // set the head of the snake to an individual value
     // the snake will trail the head with this logic
     snake[0].x += move_x; 
-    snake[0].y += move_y; 
-
+    snake[0].y += move_y;
+    for (int i = 1; i < snake_length; i++) { // kills the snake if the snake runs into itself (loops across all body parts excluding the head)
+        if (snake[i].x == snake[0].x && snake[i].y == snake[0].y) {
+            game_over();
+        }
+    }
     move(snake[0].y, snake[0].x); // move the head in the specified direction
     addstr(SNAKE_CHAR); // add the string to the console
     refresh(); // refresh the string
@@ -95,7 +100,7 @@ int main() {
         // Check if snake is out of bounds, using ioctl
         if (snake[0].x < 1 || snake[0].x > get_terminal_width() - 2 || snake[0].y < 1 || snake[0].y > get_terminal_height() - 2) {
             // TODO: make game over screen prettier
-            printf("Game Over\n");
+            game_over(); // this isnt prettier but it provides a scaffolding!
             exit(0);
         }
 
@@ -148,3 +153,18 @@ int get_terminal_height()
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     return w.ws_row;
 }
+
+void game_over() { // cleaner game over screen -- appears when snake runs into itself or hits a wall
+    clear(); // clears screen
+    refresh(); // refresh the screen
+    // get back to the middle of the terminal
+    int x = COLS / 2;
+    int y = LINES / 2;
+    move(y, x); // move cursor to the middle of the terminal
+    addstr("**Game Over**"); // print game over
+    refresh(); // refresh the screen to update it with the changes
+    usleep(1000000); // sleep console, close program
+    endwin();
+    exit(0);
+}
+
