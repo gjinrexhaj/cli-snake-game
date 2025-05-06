@@ -118,13 +118,18 @@ int main() {
             starting_length--;
         }
 
+        sleep(1);
+
         // trophy collision logic
         // TODO: make trophy add "trophy.value" amount of length to snake
         if (snake[0].x == trophy.x && snake[0].y == trophy.y) {
-            snake_length++;
+            for (int i = 0; i < trophy.value; i++) {
+                snake_length++;
+            }
+
             drop_trophy();
             snake_speed -= 8000; // overkill, but shows functionality
-           }
+        }
 
         // Check if snake is out of bounds, using ioctl
         if (snake[0].x < 1 || snake[0].x > get_terminal_width() - 2 || snake[0].y < 1 || snake[0].y > get_terminal_height() - 2) {
