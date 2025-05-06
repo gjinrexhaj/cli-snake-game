@@ -26,6 +26,7 @@ int get_terminal_height();
 void game_over();
 void drop_trophy();
 void randomize_direction();
+void win();
 
 #define SNAKE_CHAR "p"
 int move_y;
@@ -171,7 +172,10 @@ int main() {
         refresh(); // refresh to update the console window
         usleep(snake_speed); // sleep the console for a little bit
 
-        // TODO: add win condition (snake length > 1/2 size of terminal window
+        // check for win condition
+        if (snake_length >= LINES/2 || snake_length >= COLS/2) {
+            win();
+        }
     }
     endwin();
 }
@@ -222,7 +226,21 @@ void game_over() { // cleaner game over screen -- appears when snake runs into i
     int x = COLS / 2;
     int y = LINES / 2;
     move(y, x); // move cursor to the middle of the terminal
-    addstr("**Game Over**"); // print game over
+    addstr("** Game Over **"); // print game over
+    refresh(); // refresh the screen to update it with the changes
+    usleep(1000000); // sleep console, close program
+    endwin();
+    exit(0);
+}
+
+void win() {
+    clear(); // clears screen
+    refresh(); // refresh the screen
+    // get back to the middle of the terminal
+    int x = COLS / 2;
+    int y = LINES / 2;
+    move(y, x); // move cursor to the middle of the terminal
+    addstr("** Win **"); // print game over
     refresh(); // refresh the screen to update it with the changes
     usleep(1000000); // sleep console, close program
     endwin();
