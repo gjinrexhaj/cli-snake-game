@@ -14,12 +14,18 @@
 #include <curses.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <time.h>
+#include <string.h>
+
+
 
 
 // Function prototypes
 int get_terminal_width();
 int get_terminal_height();
 void game_over();
+void drop_trophy();
+void randomize_direction();
 
 #define SNAKE_CHAR "p"
 int move_y;
@@ -34,16 +40,20 @@ typedef struct { // declare a struct that holds x and y coordinates, name it Sna
 typedef struct { // define Trophy struct, which contains a given trophies' xy coord
     int x;
     int y;
+    int value;
+    int exp_time;
 } Trophy;
 
 SnakeSegment snake[100]; // initialize an array of size 100, each array position holds an x and y coordinate
-int snake_length = 3; // start with a snake size of size 3
+int snake_length = 1; // start with a snake size of size 3
+int starting_length = 3;
 
 // Programmer: Gjin Rexhaj
 void initialize_snake(int snake_length) {
     // starts at the middle of the screen
     int start_x = COLS / 2;
     int start_y = LINES / 2;
+
 
     for (int i = 0; i < snake_length; i++) {
        snake[i].y = start_y; // start at the middle of the console (LINES / 2)
@@ -74,8 +84,12 @@ void move_snake(int move_x, int move_y) {
     refresh(); // refresh the string
 }
 
+
+Trophy trophy; // Create trophy at global scope
+
 // Collaborative effort to make the main function
 int main() {
+    srand(time(NULL)); // seed the rng
     initscr(); // initialize the curses screen
     clear(); // clears screen
     noecho(); // Will capture keystrokes, nothing shown on the screen (unless a key corresponds to an addstr string)
@@ -86,20 +100,24 @@ int main() {
     keypad(stdscr, TRUE); // captures the entire screen
     nodelay(stdscr, TRUE); // makes getch() not interrupt the console and wait for an input
     // snake always starts by moving right at the start
-    move_x = 1, move_y = 0;
+    //move_x = 1, move_y = 0;
+    randomize_direction();
     initialize_snake(snake_length); // initialize the snake length
     refresh();
 
     // Infinite loop to log arrow keystrokes and move the snake
     while(1) {
 
-        // TODO: add trophy collision and snake growth logic (also drop new trophy if eat)
+        // grow the snake with initial size
+        if (starting_length > 1) {
+            snake_length++;
+            starting_length--;
+        }
 
-        // TODO: add snake colliding with itself logic (if self collide, then game over)
+        // TODO: add trophy collision and snake growth logic (also drop new trophy if eat)
 
         // Check if snake is out of bounds, using ioctl
         if (snake[0].x < 1 || snake[0].x > get_terminal_width() - 2 || snake[0].y < 1 || snake[0].y > get_terminal_height() - 2) {
-            // TODO: make game over screen prettier
             game_over(); // this isnt prettier but it provides a scaffolding!
             exit(0);
         }
@@ -130,6 +148,9 @@ int main() {
                 endwin();
                 return 0;
         }
+
+        //drop_trophy();
+
         move_snake(move_x, move_y); // move the snake 1 space in specified direction
         refresh(); // refresh to update the console window
         usleep(100000); // sleep the console for a little bit
@@ -137,6 +158,22 @@ int main() {
         // TODO: add win condition (snake length > 1/2 size of terminal window
     }
     endwin();
+}
+
+
+void drop_trophy() {
+    // randomize x and y coords
+    trophy.x = rand() % (get_terminal_width() - 2) + 2;
+    trophy.y = rand() % (get_terminal_height() - 2) + 2;
+    // randomize value from 1 to 9
+    trophy.value = rand() % 10;
+    // randomize exp_time in seconds from 1 to 9
+    trophy.exp_time = rand() % 10;
+
+    printw("trophy.x = %d, trophy.y = %d\ntrophy.value = %d, trophy.exp_time = %d\n", trophy.x, trophy.y, trophy.value, trophy.exp_time);
+
+    // TODO: handle removing previous trophy and dropping new trophy on the screen
+
 }
 
 
@@ -166,5 +203,29 @@ void game_over() { // cleaner game over screen -- appears when snake runs into i
     usleep(1000000); // sleep console, close program
     endwin();
     exit(0);
+}
+
+void randomize_direction() {
+    int direction = rand() % 4;
+    switch (direction) {
+    case 0:  // move up
+        move_x = 0;
+        move_y = -1;
+        break;
+    case 1: // down
+        move_x = 0;
+        move_y = 1;
+        break;
+    case 2: // left
+        move_x = -1;
+        move_y = 0;
+        break;
+    case 3: // right
+        move_x = 1;
+        move_y = 0;
+        break;
+    default:
+        break;
+    }
 }
 
