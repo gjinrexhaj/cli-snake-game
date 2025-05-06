@@ -17,9 +17,6 @@
 #include <time.h>
 #include <string.h>
 
-
-
-
 // Function prototypes
 int get_terminal_width();
 int get_terminal_height();
@@ -102,24 +99,19 @@ int main() {
 
     keypad(stdscr, TRUE); // captures the entire screen
     nodelay(stdscr, TRUE); // makes getch() not interrupt the console and wait for an input
-    // snake always starts by moving right at the start
-    //move_x = 1, move_y = 0;
-    randomize_direction();
+    randomize_direction(); // randomize the snake direction on spawn
     initialize_snake(snake_length); // initialize the snake length
     drop_trophy();
-    //printw("trophy.x = %d\ntrophy.y = %d\ntrophy.value = %d\ntrophy.exp_time = %d\n", trophy.x, trophy.y, trophy.value, trophy.exp_time);
     refresh();
 
     // Infinite loop to log arrow keystrokes and move the snake
     while(1) {
-
 
         // grow the snake with initial size
         if (starting_length > 1) {
             snake_length++;
             starting_length--;
         }
-
 
         // trophy collision logic
         if (snake[0].x == trophy.x && snake[0].y == trophy.y) {
@@ -136,7 +128,6 @@ int main() {
             game_over(); // this isnt prettier but it provides a scaffolding!
             exit(0);
         }
-
 
         // drop new trophy if expired
         if (difftime(time(NULL), trophy_time) > trophy.exp_time) {
@@ -215,8 +206,7 @@ int get_terminal_width() {
     return w.ws_col;
 }
 
-int get_terminal_height()
-{
+int get_terminal_height() {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     return w.ws_row;
@@ -236,8 +226,7 @@ void game_over() { // cleaner game over screen -- appears when snake runs into i
     exit(0);
 }
 
-void win()
-{
+void win() {
     clear(); // clears screen
     refresh(); // refresh the screen
     // get back to the middle of the terminal
