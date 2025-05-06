@@ -28,7 +28,7 @@ void drop_trophy();
 void randomize_direction();
 void win();
 
-#define SNAKE_CHAR "p"
+#define SNAKE_CHAR "#"
 int move_y;
 int move_x;
 
@@ -49,6 +49,7 @@ SnakeSegment snake[100]; // initialize an array of size 100, each array position
 int snake_length = 1; // start with a snake size of size 3
 int starting_length = 3;
 int snake_speed = 100000; // initialize snake speed
+bool endless = false;
 
 // Programmer: Gjin Rexhaj
 void initialize_snake(int snake_length) {
@@ -173,8 +174,10 @@ int main() {
         usleep(snake_speed); // sleep the console for a little bit
 
         // check for win condition
-        if (snake_length >= LINES/2 || snake_length >= COLS/2) {
-            win();
+        if (!endless) {
+            if (snake_length >= LINES/2 || snake_length >= COLS/2) {
+                win();
+            }
         }
     }
     endwin();
@@ -233,16 +236,53 @@ void game_over() { // cleaner game over screen -- appears when snake runs into i
     exit(0);
 }
 
-void win() {
+void win()
+{
     clear(); // clears screen
     refresh(); // refresh the screen
     // get back to the middle of the terminal
     int x = COLS / 2;
     int y = LINES / 2;
     move(y, x); // move cursor to the middle of the terminal
-    addstr("** Win **"); // print game over
+    addstr("** Win **"); // print win
+    move(y+3, x);
+    addstr("Press '1' for endless mode");
+    move(y+4, x);
+    addstr("Press '0' to exit");
     refresh(); // refresh the screen to update it with the changes
-    usleep(1000000); // sleep console, close program
+    sleep(1);
+
+    bool input_state = true;
+
+    while (input_state) {
+        char response = getchar();
+        if (response == '1') {
+            input_state = false;
+            endless = true;
+            clear();
+            box(stdscr, 0, 0);
+
+            char str_num[2];
+
+            move(snake[0].y, snake[0].x);
+            for (int i = 3; i >= 0; i--) {
+                sprintf(str_num, "%d", i);
+                addstr(str_num);
+                sleep(1);
+                refresh();
+                move(snake[0].y, snake[0].x);
+            }
+            addstr(" ");
+
+            refresh();
+            return;
+        } else if (response == '0') {
+            input_state = false;
+            endwin();
+            exit(0);
+        }
+    }
+
     endwin();
     exit(0);
 }
