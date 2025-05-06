@@ -85,7 +85,7 @@ void move_snake(int move_x, int move_y) {
     refresh(); // refresh the string
 }
 
-
+time_t trophy_time; // create timer var
 Trophy trophy; // Create trophy at global scope
 
 // Collaborative effort to make the main function
@@ -135,9 +135,13 @@ int main() {
             exit(0);
         }
 
-        // TODO: check for trophy expiration (randomize a given trophies'
-        //  expiration time, drop new trophy if expire)
-        // TODO: use "ticker" for this functionality
+
+        // drop new trophy if expired
+        if (difftime(time(NULL), trophy_time) > trophy.exp_time) {
+            move(trophy.y, trophy.x);
+            addstr(" ");
+            drop_trophy();
+        }
 
         int ch = getch();
         switch(ch) {
@@ -188,6 +192,8 @@ void drop_trophy() {
 
     // print to screen
     char trophy_str[2];
+
+    trophy_time = time(NULL);
 
     move(trophy.y, trophy.x);
     sprintf(trophy_str, "%d", trophy.value);
