@@ -47,6 +47,7 @@ typedef struct { // define Trophy struct, which contains a given trophies' xy co
 SnakeSegment snake[100]; // initialize an array of size 100, each array position holds an x and y coordinate
 int snake_length = 1; // start with a snake size of size 3
 int starting_length = 3;
+int snake_speed = 100000; // initialize snake speed
 
 // Programmer: Gjin Rexhaj
 void initialize_snake(int snake_length) {
@@ -122,7 +123,8 @@ int main() {
         if (snake[0].x == trophy.x && snake[0].y == trophy.y) {
             snake_length++;
             drop_trophy();
-        }
+            snake_speed -= 8000; // overkill, but shows functionality
+           }
 
         // Check if snake is out of bounds, using ioctl
         if (snake[0].x < 1 || snake[0].x > get_terminal_width() - 2 || snake[0].y < 1 || snake[0].y > get_terminal_height() - 2) {
@@ -160,7 +162,7 @@ int main() {
 
         move_snake(move_x, move_y); // move the snake 1 space in specified direction
         refresh(); // refresh to update the console window
-        usleep(100000); // sleep the console for a little bit
+        usleep(snake_speed); // sleep the console for a little bit
 
         // TODO: add win condition (snake length > 1/2 size of terminal window
     }
@@ -177,9 +179,9 @@ void drop_trophy() {
     trophy.x = (rand() % (c_max - min)) + min;
     trophy.y = (rand() % (l_max - min)) + min;
     // randomize value from 1 to 9
-    trophy.value = rand() % 10;
+    trophy.value = rand() % (9-1 + 1) + 1; 
     // randomize exp_time in seconds from 1 to 9
-    trophy.exp_time = rand() % 10;
+    trophy.exp_time = rand() % (9-1 + 1) + 1;
 
     // print to screen
     char trophy_str[2];
