@@ -103,10 +103,13 @@ int main() {
     //move_x = 1, move_y = 0;
     randomize_direction();
     initialize_snake(snake_length); // initialize the snake length
+    drop_trophy();
+    //printw("trophy.x = %d\ntrophy.y = %d\ntrophy.value = %d\ntrophy.exp_time = %d\n", trophy.x, trophy.y, trophy.value, trophy.exp_time);
     refresh();
 
     // Infinite loop to log arrow keystrokes and move the snake
     while(1) {
+
 
         // grow the snake with initial size
         if (starting_length > 1) {
@@ -114,7 +117,12 @@ int main() {
             starting_length--;
         }
 
-        // TODO: add trophy collision and snake growth logic (also drop new trophy if eat)
+        // trophy collision logic
+        // TODO: make trophy add "trophy.value" amount of length to snake
+        if (snake[0].x == trophy.x && snake[0].y == trophy.y) {
+            snake_length++;
+            drop_trophy();
+        }
 
         // Check if snake is out of bounds, using ioctl
         if (snake[0].x < 1 || snake[0].x > get_terminal_width() - 2 || snake[0].y < 1 || snake[0].y > get_terminal_height() - 2) {
@@ -124,6 +132,7 @@ int main() {
 
         // TODO: check for trophy expiration (randomize a given trophies'
         //  expiration time, drop new trophy if expire)
+        // TODO: use "ticker" for this functionality
 
         int ch = getch();
         switch(ch) {
@@ -149,8 +158,6 @@ int main() {
                 return 0;
         }
 
-        //drop_trophy();
-
         move_snake(move_x, move_y); // move the snake 1 space in specified direction
         refresh(); // refresh to update the console window
         usleep(100000); // sleep the console for a little bit
@@ -162,18 +169,24 @@ int main() {
 
 
 void drop_trophy() {
-    // randomize x and y coords
-    trophy.x = rand() % (get_terminal_width() - 2) + 2;
-    trophy.y = rand() % (get_terminal_height() - 2) + 2;
+    srand(time(NULL));
+    // randomize x and y coord
+    int min = 2;
+    int c_max = COLS-2;
+    int l_max = LINES-2;
+    trophy.x = (rand() % (c_max - min)) + min;
+    trophy.y = (rand() % (l_max - min)) + min;
     // randomize value from 1 to 9
     trophy.value = rand() % 10;
     // randomize exp_time in seconds from 1 to 9
     trophy.exp_time = rand() % 10;
 
-    printw("trophy.x = %d, trophy.y = %d\ntrophy.value = %d, trophy.exp_time = %d\n", trophy.x, trophy.y, trophy.value, trophy.exp_time);
+    // print to screen
+    char trophy_str[2];
 
-    // TODO: handle removing previous trophy and dropping new trophy on the screen
-
+    move(trophy.y, trophy.x);
+    sprintf(trophy_str, "%d", trophy.value);
+    addstr(trophy_str);
 }
 
 
@@ -228,4 +241,3 @@ void randomize_direction() {
         break;
     }
 }
-
