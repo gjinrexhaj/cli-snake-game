@@ -48,7 +48,7 @@ typedef struct { // define Trophy struct, which contains a given trophies' xy co
 
 SnakeSegment snake[100]; // initialize an array of size 100, each array position holds an x and y coordinate
 int snake_length = 1; // start with a snake size of size 3
-int starting_length = 3;
+int starting_length = 5;
 int snake_speed = 100000; // initialize snake speed
 bool endless = false;
 
