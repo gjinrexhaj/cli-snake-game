@@ -139,11 +139,12 @@ int main() {
         int ch = getch();
         switch(ch) {
             // change an x or y value by 1 in a specific direction to move the snake
+            // FOR WASD CONTROLS: KEY_UP = 119, KEY_DOWN = 115, KEY_LEFT = 97, KEY_RIGHT = 100
             case KEY_UP:
                 move_x = 0;
                 move_y = -1;
                 break;
-            case KEY_DOWN:
+            case KEY_DOWN: 
                 move_x = 0;
                 move_y = 1;
                 break;
@@ -166,7 +167,8 @@ int main() {
 
         // check for win condition
         if (!endless) {
-            if (snake_length >= LINES/2 || snake_length >= COLS/2) {
+            int perimeter = (LINES + COLS) * 2; // calculates perimeter 
+            if (snake_length >= perimeter / 2) { // if the snake is greater than/equal to half the perimeter, player wins
                 win();
             }
         }
@@ -178,11 +180,21 @@ int main() {
 void drop_trophy() {
     srand(time(NULL));
     // randomize x and y coord
+    bool not_snake = false;
     int min = 2;
     int c_max = COLS-2;
     int l_max = LINES-2;
-    trophy.x = (rand() % (c_max - min)) + min;
-    trophy.y = (rand() % (l_max - min)) + min;
+    while (not_snake == false) { // checks to see if a trophy is being spawned on a snake
+        trophy.x = (rand() % (c_max - min)) + min;
+        trophy.y = (rand() % (l_max - min)) + min;
+        not_snake = true; // set this to true first
+        for (int i = 0; i < snake_length + 2; i++) {
+            if (trophy.x == snake[i].x && trophy.y == snake[i].y) { // if the trophy spawns on a snake, generate new coords
+                not_snake = false;
+                break;
+            } 
+        }
+    }
     // randomize value from 1 to 9
     trophy.value = rand() % (9-1 + 1) + 1; 
     // randomize exp_time in seconds from 1 to 9
@@ -194,6 +206,7 @@ void drop_trophy() {
     trophy_time = time(NULL);
 
     move(trophy.y, trophy.x);
+
     sprintf(trophy_str, "%d", trophy.value);
     addstr(trophy_str);
 }
