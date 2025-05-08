@@ -1,12 +1,16 @@
 /* 
 * CS 355 System Programming -- Snake Game Final Project
 *
-* Snake moves with a starting length of 5 moving right
-* Snake moves in all directions
-* Border is visible
+* Text-based version of snake game!
+* Starts with a snake of length 3 moving in a random direction every time
+* A trophy with a randomly generated value will be spawned once the game begins
+* The trophy value determines how big the snake grows once it eats a trophy
+* Trophies will respawn in a new area when the user eats the trophy or it has been 1-9 seconds since the trophy spawned
+* Player wins if the snake grows to half the perimeter of the border
+* Player loses if the snake crashes into itself or the wall at any point
 *
 * Programmers: Tyler Brown, Gjin Rexhaj
-* Date: May 1st, 2025
+* Date: May 8th, 2025
 */
 
 #include <stdio.h>
@@ -119,13 +123,13 @@ int main() {
                 snake_length++;
             }
 
-            snake_speed -= trophy.value * 800; // overkill, but shows functionality
+            snake_speed -= trophy.value * 930; // snake speed grows proportionally w/ size per trophy eaten
             drop_trophy();
         }
 
         // Check if snake is out of bounds, using ioctl
         if (snake[0].x < 1 || snake[0].x > get_terminal_width() - 2 || snake[0].y < 1 || snake[0].y > get_terminal_height() - 2) {
-            game_over(); // this isnt prettier but it provides a scaffolding!
+            game_over(); // function to print game over to the screen when out of bounds occurs
             exit(0);
         }
 
@@ -176,7 +180,7 @@ int main() {
     endwin();
 }
 
-
+// Programmer: Gjin Rexhaj, trophy spawn fix by Tyler Brown
 void drop_trophy() {
     srand(time(NULL));
     // randomize x and y coord
@@ -212,7 +216,7 @@ void drop_trophy() {
 }
 
 
-// IMPLEMENT PROTOTYPES
+// Programmer: Gjin Rexhaj (both terminal width and height)
 int get_terminal_width() {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
@@ -225,6 +229,7 @@ int get_terminal_height() {
     return w.ws_row;
 }
 
+// Programmer: Tyler Brown
 void game_over() { // cleaner game over screen -- appears when snake runs into itself or hits a wall
     clear(); // clears screen
     refresh(); // refresh the screen
@@ -239,6 +244,7 @@ void game_over() { // cleaner game over screen -- appears when snake runs into i
     exit(0);
 }
 
+// Programmer: Gjin Rexhaj
 void win() {
     clear(); // clears screen
     refresh(); // refresh the screen
@@ -246,51 +252,19 @@ void win() {
     int x = COLS / 2;
     int y = LINES / 2;
     move(y, x); // move cursor to the middle of the terminal
-    addstr("** Win **"); // print win
+    addstr("** You Win **"); // print win
     move(y+3, x);
-    addstr("Press '1' for endless mode");
-    move(y+4, x);
-    addstr("Press '0' to exit");
-    refresh(); // refresh the screen to update it with the changes
+    addstr("Congrats!"); // closes program after this print
+    refresh();
     sleep(1);
-
-    bool input_state = true;
-
-    while (input_state) {
-        char response = getchar();
-        if (response == '1') {
-            input_state = false;
-            endless = true;
-            clear();
-            box(stdscr, 0, 0);
-
-            char str_num[2];
-
-            move(snake[0].y, snake[0].x);
-            for (int i = 3; i >= 0; i--) {
-                sprintf(str_num, "%d", i);
-                addstr(str_num);
-                sleep(1);
-                refresh();
-                move(snake[0].y, snake[0].x);
-            }
-            addstr(" ");
-
-            refresh();
-            return;
-        } else if (response == '0') {
-            input_state = false;
-            endwin();
-            exit(0);
-        }
-    }
-
     endwin();
     exit(0);
 }
 
+// Programmer: Tyler Brown
+// randomizes direction when the game begins
 void randomize_direction() {
-    int direction = rand() % 4;
+    int direction = rand() % 4; // random value 0-3 decides initial direction
     switch (direction) {
     case 0:  // move up
         move_x = 0;
