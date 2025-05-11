@@ -29,11 +29,12 @@ void drop_trophy();
 void randomize_direction();
 void win();
 
+// snake character definitions, int move_y and move_x declared locally for the snake
 #define SNAKE_CHAR "#"
 int move_y;
 int move_x;
 
-// Programmer: Gjin Rexhaj
+// Programmer: Gjin Rexhaj (both structs)
 typedef struct { // declare a struct that holds x and y coordinates, name it SnakeSegment
     int x;
     int y;
@@ -95,11 +96,11 @@ Trophy trophy; // Create trophy at global scope
 int main() {
     srand(time(NULL)); // seed the rng
     initscr(); // initialize the curses screen
-    clear(); // clears screen
     noecho(); // Will capture keystrokes, nothing shown on the screen (unless a key corresponds to an addstr string)
     curs_set(0); // hides the cursor
-
+    refresh();
     box(stdscr, 0, 0); // draw border
+    refresh();
 
     keypad(stdscr, TRUE); // captures the entire screen
     nodelay(stdscr, TRUE); // makes getch() not interrupt the console and wait for an input
@@ -139,7 +140,8 @@ int main() {
             addstr(" ");
             drop_trophy();
         }
-
+        
+        // control the snake when the game starts
         int ch = getch();
         switch(ch) {
             // change an x or y value by 1 in a specific direction to move the snake
@@ -181,9 +183,8 @@ int main() {
 }
 
 // Programmer: Gjin Rexhaj, trophy spawn fix by Tyler Brown
-void drop_trophy() {
+void drop_trophy() { // drops a trophy at a random coordinate as long as it is not on the snake body
     srand(time(NULL));
-    // randomize x and y coord
     bool not_snake = false;
     int min = 2;
     int c_max = COLS-2;
@@ -192,7 +193,7 @@ void drop_trophy() {
         trophy.x = (rand() % (c_max - min)) + min;
         trophy.y = (rand() % (l_max - min)) + min;
         not_snake = true; // set this to true first
-        for (int i = 0; i < snake_length + 2; i++) {
+        for (int i = 0; i < snake_length + 5; i++) {
             if (trophy.x == snake[i].x && trophy.y == snake[i].y) { // if the trophy spawns on a snake, generate new coords
                 not_snake = false;
                 break;
@@ -245,7 +246,7 @@ void game_over() { // cleaner game over screen -- appears when snake runs into i
 }
 
 // Programmer: Gjin Rexhaj
-void win() {
+void win() { // win screen when the snake reaches more than half the perimeter
     clear(); // clears screen
     refresh(); // refresh the screen
     // get back to the middle of the terminal
