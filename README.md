@@ -5,7 +5,7 @@
 This is a collaborative effort to build an open source snake game 
 for UNIX in C, using curses.h
 
-<img src="readme-docs/image.png" alt="User Interface" width="800"/>
+<img src="readme-docs/image.png" alt="User Interface" width="500"/>
 
 ---
 
