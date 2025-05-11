@@ -44,5 +44,5 @@ through any CLI (provided your environment is set up properly) using the followi
 ```
 
 ## Contributors
-<a href="https://github.com/gjinrexhaj"><img src="https://github.com/gjinrexhaj.png" width="50" height="50"></a>
 <a href="https://github.com/tylerk4brown"><img src="https://github.com/tylerk4brown.png" width="50" height="50"></a>
+<a href="https://github.com/gjinrexhaj"><img src="https://github.com/gjinrexhaj.png" width="50" height="50"></a>
