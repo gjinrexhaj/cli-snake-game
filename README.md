@@ -27,7 +27,7 @@ through any CLI (provided your environment is set up properly) using the followi
 
 1. **Clone the repository:**
 ```shell
-  git clone https://github.com/gjinrexhaj/java-neural-network.git
+  git clone https://github.com/gjinrexhaj/cli-snake-game.git
 ```
 2. **Create a feature branch before working on a new task:**
 ```shell
